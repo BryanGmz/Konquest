@@ -1,0 +1,34 @@
+
+El Planeta: B -> Fue conquistado  por el Jugador: Boot2
+Turno: 4
+Turno: 5
+El Planeta: A -> Fue conquistado  por el Jugador: Boot2
+Turno: 6
+El Planeta: B -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 7
+El Planeta: A -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 8
+El Planeta: A -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: A -> Fue conquistado  por el Jugador: Boot2
+Turno: 9
+El Planeta: A -> Fue conquistado  por el Jugador: Boot2
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 10
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 11
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+Turno: 12
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+Turno: 13
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+Turno: 14
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+Turno: 15
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 16

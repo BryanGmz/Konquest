@@ -1,0 +1,253 @@
+package konquest.backed.analizador.partida;
+
+import java.util.List;
+import konquest.backed.manejadores.*;
+import java_cup.runtime.*;
+import konquest.backed.objetos.*;
+import javax.swing.*;
+import konquest.gui.*;
+import java.util.ArrayList;
+
+parser code {:
+    private ManejadorSintactico manejadorSintactico;
+    private ManejadorOnline manejadorOnline;
+    private final ManejadorGUI manejadorGUI = new ManejadorGUI();
+    private JFrame framePrincipal;
+    private JPanel panelPrincipal;
+    private JPanel panelContenedor;
+    private JScrollPane scrollPane;
+    private Principal principal;
+    private boolean editar;
+    private boolean replay;
+    private String path;
+    private DialogoErrores errores;
+
+    public SintaxGuardarPartida(LexerGuardarPartida lexer, JFrame framePrincipal, JPanel panelPricipal, JScrollPane scrollPane, Principal principal, boolean editar, String path, boolean replay, DialogoErrores errores) { 
+        super(lexer);   
+        this.manejadorSintactico = new ManejadorSintactico();
+        this.principal = principal;
+        this.framePrincipal = framePrincipal;
+        this.panelPrincipal = panelPricipal;
+        this.scrollPane = scrollPane;
+        this.editar = editar;
+        this.path = path;
+        this.replay = replay;
+        this.errores = errores;
+        this.manejadorSintactico.setErrores(this.errores);
+        this.manejadorOnline = new ManejadorOnline();
+    }
+
+    public ManejadorSintactico getManejadorSintactico() {
+        return this.manejadorSintactico;
+    }
+
+    public void setAccion(String tipo, String mensaje, String accion){
+        System.out.println("ERROR Lexico Tipo: " + tipo + "\t Mensaje: " + mensaje + "\tAcción: ERROR\n");
+    }
+
+    @Override
+    public void syntax_error(Symbol s){
+        try {
+            errores.agregarErroresTXTSintaxis(
+            (("Error Sintaxis Linea #: " + (s.right + 1) 
+            + " Columna # " + (s.left + 1) 
+            + " Token NO Reconocido: -> " + (s.value) + "\n" )));
+        } catch (Exception e) {
+            System.out.println("Error " + e.toString());
+        }
+    }
+:}
+    
+
+/* Terminales */
+
+terminal Mapa, Planetas, PlanetasNeutrales, Jugadores, Ataques;
+terminal TamañoS, Tamaño, MapaCiego, Finalizacion, Turno, CantidadPlanetas;
+terminal Nombre, Naves, PorcentajeMuertes, Produccion, Fila, Columna, CantidadProducida;
+terminal PlanetasJugadores, Tipo, Error;
+terminal PlanetaDestino, PlanetaOrigen, Jugador;
+terminal Filas, Columnas, Humano, Dificil, Facil, DosPuntos, Coma, False, True, CorcheteA, CorcheteC, LlaveA, LlaveC;
+terminal NombrePlanetas, NombreJugadores, Numero, Decimal;
+
+/* No Terminales */
+
+non terminal inicio;
+non terminal declaracion_estructura_mapa, estructura_mapa, estructura_planetas, 
+             estructura_planetas_neutrales, estructura_jugadores, estructura_ataques;
+non terminal struct_planetas, declaracion_estructura_planetas;
+non terminal produccion_booleana;
+non terminal struct_jugadores, produccion_jugadores, produccion_nombres, produccion_tipo, produccion_planetas_jugadores;
+non terminal struct_ataques, produccion_ataques, struct_map, estructura_tamaño_mapa;
+
+/* Gramaticas */
+
+start with inicio;
+
+inicio ::= 
+    CorcheteA declaracion_estructura_mapa:e CorcheteC 
+    {:
+        if (manejadorSintactico.comprobarStructCargar(e, eleft, eright) != null) {
+            manejadorGUI.construirCargarPartida((EstructuraKonquest)e, panelPrincipal, framePrincipal, scrollPane, principal, replay);
+            System.out.println("\nAceptado");
+        } else {
+            System.out.println("\nNo Aceptado");
+        };
+    :}
+    | error:e inicio {:parser.syntax_error((Symbol) e);:}
+    | estructura_ataques:e {:
+        if(e != null) {
+            manejadorOnline.agregarAtaques(principal, ((List<Ataque>)e));
+            System.out.println("Aceptado");
+        };:}
+;
+
+declaracion_estructura_mapa ::= 
+    estructura_mapa:e {:RESULT = manejadorSintactico.agregarUnAtributoKonquest(e, 4);:}
+    | estructura_planetas:e {:RESULT = manejadorSintactico.agregarUnAtributoKonquest(e, 1);:}
+    | estructura_planetas_neutrales:e {:RESULT = manejadorSintactico.agregarUnAtributoKonquest(e, 2);:}
+    | estructura_jugadores:e {:RESULT = manejadorSintactico.agregarUnAtributoKonquest(e, 3);:}
+    | estructura_ataques:e {:RESULT = manejadorSintactico.agregarUnAtributoKonquest(e, 5);:}
+    
+    | declaracion_estructura_mapa:a Coma estructura_mapa:e {:RESULT = manejadorSintactico.agregarObjetosEstructura(a, e, eleft, eright, 4);:}
+    | declaracion_estructura_mapa:a Coma estructura_planetas:e {:RESULT = manejadorSintactico.agregarObjetosEstructura(a, e, eleft, eright, 1);:}
+    | declaracion_estructura_mapa:a Coma estructura_planetas_neutrales:e {:RESULT = manejadorSintactico.agregarObjetosEstructura(a, e, eleft, eright, 2);:}
+    | declaracion_estructura_mapa:a Coma estructura_jugadores:e {:RESULT = manejadorSintactico.agregarObjetosEstructura(a, e, eleft, eright, 3);:}
+    | declaracion_estructura_mapa:a Coma estructura_ataques:e {:RESULT = manejadorSintactico.agregarObjetosEstructura(a, e, eleft, eright, 5);:}
+;
+
+estructura_mapa ::= Mapa DosPuntos CorcheteA struct_map:e CorcheteC {:RESULT = manejadorSintactico.comprobarLosAtributosMapa(e, eleft, eright);:};
+
+estructura_planetas ::= 
+    Planetas DosPuntos LlaveA struct_planetas:e LlaveC {:RESULT = manejadorSintactico.listaPlanetasKonquest(e);:}
+    | Planetas DosPuntos LlaveA LlaveC {:RESULT = new ArrayList<>();:}
+;
+
+estructura_planetas_neutrales ::= 
+    PlanetasNeutrales DosPuntos LlaveA struct_planetas:e LlaveC {:RESULT = manejadorSintactico.listaPlanetasKonquest(e);:}
+    | PlanetasNeutrales DosPuntos LlaveA LlaveC {:RESULT = new ArrayList<>();:}
+;
+
+estructura_jugadores ::= Jugadores DosPuntos LlaveA struct_jugadores:e LlaveC {:RESULT = manejadorSintactico.listaJugadoresKonquest(e);:};
+
+estructura_ataques ::= 
+    Ataques DosPuntos LlaveA struct_ataques:e LlaveC {:RESULT = manejadorSintactico.listaAtaqueKonquest(e);:}
+    | Ataques DosPuntos LlaveA LlaveC {:RESULT = new ArrayList<>();:}
+;
+
+/* Estructura Planetas */
+
+struct_planetas ::= 
+    CorcheteA declaracion_estructura_planetas:e CorcheteC {:RESULT = manejadorSintactico.comprobarPlanetas(e, eleft, eright);:}
+    | struct_planetas:a Coma CorcheteA declaracion_estructura_planetas:e CorcheteC {:RESULT = manejadorSintactico.listadoPlanetas(a, e, eleft, eright);:}
+;
+
+declaracion_estructura_planetas ::=
+    Nombre DosPuntos NombrePlanetas:e {:RESULT = manejadorSintactico.agregarUnAtributoPlanetas(e, 1);:}
+    | Naves DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoPlanetas(e, 3);:}
+    | Produccion DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoPlanetas(e, 4);:}
+    | PorcentajeMuertes DosPuntos Decimal:e {:RESULT = manejadorSintactico.agregarUnAtributoPlanetas(e, 2);:}
+    | Fila DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoPlanetas(e, 5);:}
+    | Columna DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoPlanetas(e, 6);:}
+    | CantidadProducida DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoPlanetas(e, 7);:}
+
+    | declaracion_estructura_planetas:a Coma Nombre DosPuntos NombrePlanetas:e {:RESULT = manejadorSintactico.agregarObjetosPlanetas(a, e, eleft, eright, 1);:}
+    | declaracion_estructura_planetas:a Coma Naves DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosPlanetas(a, e, eleft, eright, 2);:}
+    | declaracion_estructura_planetas:a Coma Produccion DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosPlanetas(a, e, eleft, eright, 3);:}
+    | declaracion_estructura_planetas:a Coma PorcentajeMuertes DosPuntos Decimal:e {:RESULT = manejadorSintactico.agregarObjetosPlanetas(a, e, eleft, eright, 4);:}
+    | declaracion_estructura_planetas:a Coma Fila DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosPlanetas(a, e, eleft, eright, 5);:}
+    | declaracion_estructura_planetas:a Coma Columna DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosPlanetas(a, e, eleft, eright, 6);:}
+    | declaracion_estructura_planetas:a Coma CantidadProducida DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosPlanetas(a, e, eleft, eright, 7);:}
+;
+
+produccion_booleana ::= 
+    True {:RESULT = true;:}
+    | False {:RESULT = false;:}
+;
+
+/* Estrucura Jugadores */
+
+struct_jugadores ::= 
+    CorcheteA produccion_jugadores:e CorcheteC {:RESULT = manejadorSintactico.comprobarJugadores(e, eleft, eright);:}
+    | struct_jugadores:a Coma CorcheteA produccion_jugadores:e CorcheteC {:RESULT = manejadorSintactico.listadoJugadores(a, e, eleft, eright);:}
+;
+
+produccion_nombres ::= 
+    NombreJugadores:e {:RESULT = e.toString().replaceAll("\"", "");:}
+    | NombrePlanetas:e {:RESULT = e.toString().replaceAll("\"", "");:}
+;
+
+produccion_jugadores ::= 
+    Nombre DosPuntos produccion_nombres:e Coma PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC Coma Tipo DosPuntos produccion_tipo:i
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | Nombre DosPuntos produccion_nombres:e Coma Tipo DosPuntos produccion_tipo:i Coma PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC 
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | Tipo DosPuntos produccion_tipo:i Coma Nombre DosPuntos produccion_nombres:e Coma PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC 
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | Tipo DosPuntos produccion_tipo:i Coma PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC Coma Nombre DosPuntos produccion_nombres:e
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC Coma Tipo DosPuntos produccion_tipo:i Coma Nombre DosPuntos produccion_nombres:e
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC Coma Nombre DosPuntos produccion_nombres:e Coma Tipo DosPuntos produccion_tipo:i
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+;
+
+produccion_tipo ::= 
+    Humano:e {:RESULT = e.toString();:}
+    | Dificil:e {:RESULT = e.toString();:}
+    | Facil:e {:RESULT = e.toString();:}
+;
+
+produccion_planetas_jugadores ::= 
+    NombrePlanetas:e {:RESULT = e.toString().replaceAll("\"", "");:}
+    | produccion_planetas_jugadores:e Coma NombrePlanetas:a {:RESULT = manejadorSintactico.listadoPlanetasJugador(e, a);:}
+;
+
+/* Estructura Ataques */
+
+struct_ataques ::= 
+    CorcheteA produccion_ataques:e CorcheteC {:RESULT = manejadorSintactico.comprobarLosAtributosAtaque(e, eleft, eright);:}
+    | struct_ataques:a Coma CorcheteA produccion_ataques:e CorcheteC {:RESULT = manejadorSintactico.listadoAtaques(a, e, eleft, eright);:}
+;
+
+produccion_ataques ::=
+    PlanetaDestino DosPuntos NombrePlanetas:e {:RESULT = manejadorSintactico.agregarUnAtributoAtaques(e, 1);:}
+    | PlanetaOrigen DosPuntos NombrePlanetas:e {:RESULT = manejadorSintactico.agregarUnAtributoAtaques(e, 2);:}
+    | Jugador DosPuntos produccion_nombres:e {:RESULT = manejadorSintactico.agregarUnAtributoAtaques(e, 3);:}
+    | PorcentajeMuertes DosPuntos Decimal:e {:RESULT = manejadorSintactico.agregarUnAtributoAtaques(e, 4);:}
+    | Naves DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoAtaques(e, 5);:}
+    | Turno DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoAtaques(e, 6);:}
+
+    | produccion_ataques:a Coma PlanetaDestino DosPuntos NombrePlanetas:e {:RESULT = manejadorSintactico.agregarObjetosAtaque(a, e, eleft, eright, 1);:}
+    | produccion_ataques:a Coma PlanetaOrigen DosPuntos NombrePlanetas:e {:RESULT = manejadorSintactico.agregarObjetosAtaque(a, e, eleft, eright, 2);:}
+    | produccion_ataques:a Coma Jugador DosPuntos produccion_nombres:e {:RESULT = manejadorSintactico.agregarObjetosAtaque(a, e, eleft, eright, 3);:}
+    | produccion_ataques:a Coma PorcentajeMuertes DosPuntos Decimal:e {:RESULT = manejadorSintactico.agregarObjetosAtaque(a, e, eleft, eright, 4);:}
+    | produccion_ataques:a Coma Naves DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosAtaque(a, e, eleft, eright, 5);:}
+    | produccion_ataques:a Coma Turno DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosAtaque(a, e, eleft, eright, 6);:}
+;
+
+/* Estructura Mapa */
+
+estructura_tamaño_mapa ::=
+    Filas DosPuntos Numero:f Coma Columnas DosPuntos Numero:c
+    {:RESULT = manejadorSintactico.agregarTamaño(f, c);:}
+    | Columnas DosPuntos Numero:c Coma Filas DosPuntos Numero:f
+    {:RESULT = manejadorSintactico.agregarTamaño(f, c);:}
+;
+
+struct_map ::= 
+    Tamaño DosPuntos CorcheteA estructura_tamaño_mapa:e CorcheteC {:RESULT = manejadorSintactico.agregarUnAtributoMapa(e, 1);:}
+    | TamañoS DosPuntos CorcheteA estructura_tamaño_mapa:e CorcheteC {:RESULT = manejadorSintactico.agregarUnAtributoMapa(e, 1);:} 
+    | MapaCiego DosPuntos produccion_booleana:e {:RESULT = manejadorSintactico.agregarUnAtributoMapa(e, 2);:}
+    | Finalizacion DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoMapa(e, 3);:}
+    | CantidadPlanetas DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoMapa(e, 4);:}
+    | Turno DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributoMapa(e, 5);:}
+    | Jugador DosPuntos produccion_nombres:e {:RESULT = manejadorSintactico.agregarUnAtributoMapa(e, 6);:}
+
+    | struct_map:a Coma Tamaño DosPuntos CorcheteA estructura_tamaño_mapa:e CorcheteC {:RESULT = manejadorSintactico.agregarObjetosMapaPartida(a, e, eleft, eright, 1);:}
+    | struct_map:a Coma TamañoS DosPuntos CorcheteA estructura_tamaño_mapa:e CorcheteC {:RESULT = manejadorSintactico.agregarObjetosMapaPartida(a, e, eleft, eright, 1);:}
+    | struct_map:a Coma MapaCiego DosPuntos produccion_booleana :e {:RESULT = manejadorSintactico.agregarObjetosMapaPartida(a, e, eleft, eright, 2);:}
+    | struct_map:a Coma Finalizacion DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosMapaPartida(a, e, eleft, eright, 3);:}
+    | struct_map:a Coma CantidadPlanetas DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosMapaPartida(a, e, eleft, eright, 4);:}
+    | struct_map:a Coma Turno DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarObjetosMapaPartida(a, e, eleft, eright, 5);:}
+    | struct_map:a Coma Jugador DosPuntos produccion_nombres:e {:RESULT = manejadorSintactico.agregarObjetosMapaPartida(a, e, eleft, eright, 6);:}
+;

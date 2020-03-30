@@ -1,0 +1,75 @@
+
+<REPLAY nombre="null" ubicacion="null">
+	<ARCHIVO nombre="GPReplay4" ubicacion="./replay/GPReplay4.gpr">
+			<TEXTO ubicacion="./text/AreaTexto4.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay5" ubicacion="./replay/GPReplay5.gpr">
+			<TEXTO ubicacion="./text/AreaTexto5.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay6" ubicacion="./replay/GPReplay6.gpr">
+			<TEXTO ubicacion="./text/AreaTexto6.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay7" ubicacion="./replay/GPReplay7.gpr">
+			<TEXTO ubicacion="./text/AreaTexto7.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay8" ubicacion="./replay/GPReplay8.gpr">
+			<TEXTO ubicacion="./text/AreaTexto8.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay9" ubicacion="./replay/GPReplay9.gpr">
+			<TEXTO ubicacion="./text/AreaTexto9.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay10" ubicacion="./replay/GPReplay10.gpr">
+			<TEXTO ubicacion="./text/AreaTexto10.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay11" ubicacion="./replay/GPReplay11.gpr">
+			<TEXTO ubicacion="./text/AreaTexto11.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay12" ubicacion="./replay/GPReplay12.gpr">
+			<TEXTO ubicacion="./text/AreaTexto12.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay13" ubicacion="./replay/GPReplay13.gpr">
+			<TEXTO ubicacion="./text/AreaTexto13.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay14" ubicacion="./replay/GPReplay14.gpr">
+			<TEXTO ubicacion="./text/AreaTexto14.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay15" ubicacion="./replay/GPReplay15.gpr">
+			<TEXTO ubicacion="./text/AreaTexto15.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay16" ubicacion="./replay/GPReplay16.gpr">
+			<TEXTO ubicacion="./text/AreaTexto16.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay17" ubicacion="./replay/GPReplay17.gpr">
+			<TEXTO ubicacion="./text/AreaTexto17.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay18" ubicacion="./replay/GPReplay18.gpr">
+			<TEXTO ubicacion="./text/AreaTexto18.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay19" ubicacion="./replay/GPReplay19.gpr">
+			<TEXTO ubicacion="./text/AreaTexto19.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay20" ubicacion="./replay/GPReplay20.gpr">
+			<TEXTO ubicacion="./text/AreaTexto20.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay21" ubicacion="./replay/GPReplay21.gpr">
+			<TEXTO ubicacion="./text/AreaTexto21.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay22" ubicacion="./replay/GPReplay22.gpr">
+			<TEXTO ubicacion="./text/AreaTexto22.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay23" ubicacion="./replay/GPReplay23.gpr">
+			<TEXTO ubicacion="./text/AreaTexto23.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay24" ubicacion="./replay/GPReplay24.gpr">
+			<TEXTO ubicacion="./text/AreaTexto24.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay25" ubicacion="./replay/GPReplay25.gpr">
+			<TEXTO ubicacion="./text/AreaTexto25.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay26" ubicacion="./replay/GPReplay26.gpr">
+			<TEXTO ubicacion="./text/AreaTexto26.txt"/>
+	</ARCHIVO>
+	<ARCHIVO nombre="GPReplay27" ubicacion="./replay/GPReplay27.gpr">
+			<TEXTO ubicacion="./text/AreaTexto27.txt"/>
+	</ARCHIVO>
+</REPLAY>

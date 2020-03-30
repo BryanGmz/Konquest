@@ -1,0 +1,376 @@
+package konquest.backed.analizador;
+
+import java.util.List;
+import java.util.ArrayList;
+import konquest.backed.manejadores.*;
+import java_cup.runtime.*;
+import konquest.backed.objetos.*;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import konquest.gui.*;
+import java.awt.event.*;
+
+parser code {:
+    private ManejadorSintactico manejadorSintactico;
+    private final ManejadorGUI manejadorGUI = new ManejadorGUI();
+    private JFrame framePrincipal;
+    private JPanel panelPrincipal;
+    private JPanel panelContenedor;
+    private JScrollPane scrollPane;
+    private Principal principal;
+    private boolean editar;
+    private String path;
+    private DialogoErrores errores;
+
+    public Sintax(Lexico lexer, JFrame framePrincipal, JPanel panelPricipal, JScrollPane scrollPane, 
+        Principal principal, boolean editar, String path, DialogoErrores errores) { 
+        super(lexer);   
+        this.manejadorSintactico = new ManejadorSintactico();
+        this.principal = principal;
+        this.framePrincipal = framePrincipal;
+        this.panelPrincipal = panelPricipal;
+        this.scrollPane = scrollPane;
+        this.editar = editar;
+        this.path = path;
+        this.errores = errores;
+        this.manejadorSintactico.setErrores(this.errores);
+    }
+
+    public ManejadorSintactico getManejadorSintactico() {
+        return this.manejadorSintactico;
+    }
+
+    public void setAccion(String tipo, String mensaje, String accion){
+        System.out.println("ERROR Lexico Tipo: " + tipo + "\t Mensaje: " + mensaje + "\tAcción: ERROR\n");
+    }
+
+    @Override
+    public void syntax_error(Symbol s){
+        try {
+            errores.agregarErroresTXTSintaxis(
+            (("Error Sintaxis Linea #: " + (s.right + 1) 
+            + " Columna # " + (s.left + 1) 
+            + " Token NO Reconocido: -> " + (s.value) + "\n" )));
+        } catch (Exception e) {
+            System.out.println("Error " + e.toString());
+        }
+    }
+:}
+    
+
+/* Terminales */
+
+terminal Mapa, Planetas, PlanetasNeutrales, Jugadores;
+terminal ID, TamañoS, Tamaño, AlAzar, PlanetasNeutralesMapa, MapaCiego, Acumular, Finalizacion, Neutrales;
+terminal MostrarNaves, MostrarEstadisticas, Produccion;
+terminal Nombre, Naves, PorcentajeMuertes;
+terminal PlanetasJugadores, Tipo;
+terminal Filas, Columnas, Humano, Dificil, Facil, DosPuntos, Coma, False, True, CorcheteA, CorcheteC, LlaveA, LlaveC;
+terminal NombrePlanetas, NombreJugadores, Identificador, Numero, Decimal, Error;
+
+/* No Terminales */
+
+non terminal inicio;
+non terminal declaracion_estructura_mapa, estructura_mapa, estructura_planetas, estructura_planetas_neutrales, estructura_jugadores;
+non terminal declaracion_planetas, declaracion_neutrales, declaracion_mapa, declaracion_jugadores;
+non terminal declaracion_planetas_neutrales_jugadores, declaracion_planetas_jugadores, declaracion_planetas_neutrales_planetas,
+             declaracion_mapa_jugadores, declaracion_planetas_neutrales_mapa, declaracion_planetas_mapa;
+non terminal declaracion_estructura_planetas, declaracion_estructura_planetas_neutrales;
+non terminal declaracion_nombre, declaracion_naves, declaracion_produccion, declaracion_porcentaje;
+non terminal declaracion_nombre_naves, declaracion_nombre_produccion, declaracion_nombre_porcentaje,
+             declaracion_naves_produccion, declaracion_naves_porcentaje, declaracion_produccion_porcentaje;
+non terminal estructura_nombre, estructura_naves, estructura_produccion, estructura_porcentaje;
+non terminal estructura_tamaño_mapa, estructura_neutrales_mapa, produccion_nombres_mapa;
+non terminal produccion_booleana, produccion_jugadores, produccion_tipo, produccion_planetas_jugadores, produccion_nombres;
+non terminal struct_planetas, struct_jugadores, struct_map, struct_planetas_neutrales;
+
+/* Gramaticas */
+
+start with inicio;
+
+inicio ::= 
+    CorcheteA declaracion_estructura_mapa:e CorcheteC {:
+        if (manejadorSintactico.comprobarStruct(e, eleft, eright) != null) {
+            if (editar) {
+                manejadorGUI.construirDialogoEditar((EstructuraKonquest)e, framePrincipal, path); 
+            } else {   
+                manejadorGUI.construir((EstructuraKonquest)e, panelPrincipal, framePrincipal, scrollPane, principal);
+            }
+            System.out.println("\nAceptado");
+        } else {
+            System.out.println("\nNo Aceptado");
+        }
+    :}
+    | error:e inicio {:parser.syntax_error((Symbol) e);:}
+;
+
+declaracion_estructura_mapa ::= 
+    estructura_mapa:e Coma declaracion_mapa:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 4);:}
+    | estructura_planetas:e Coma declaracion_planetas:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 1);:}
+    | estructura_planetas_neutrales:e Coma declaracion_neutrales:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 2);:}
+    | estructura_jugadores:e Coma declaracion_jugadores:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 3);:}
+    | error:e declaracion_estructura_mapa:a {:parser.syntax_error((Symbol) e); RESULT = (EstructuraKonquest)a;:}
+;
+
+declaracion_mapa ::= 
+    estructura_planetas:e Coma declaracion_planetas_neutrales_jugadores:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 1);:}
+    | estructura_planetas_neutrales:e Coma declaracion_planetas_jugadores:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 2);:}
+    | estructura_jugadores:e Coma declaracion_planetas_neutrales_planetas:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 3);:}
+;
+
+declaracion_planetas ::= 
+    estructura_mapa:e Coma declaracion_planetas_neutrales_jugadores:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 4);:}
+    | estructura_planetas_neutrales:e Coma declaracion_mapa_jugadores:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 2);:}
+    | estructura_jugadores:e Coma declaracion_planetas_neutrales_mapa:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 3);:}
+;
+
+declaracion_neutrales ::= 
+    estructura_mapa:e Coma declaracion_planetas_jugadores:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 4);:}
+    | estructura_planetas:e Coma declaracion_mapa_jugadores:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 1);:}
+    | estructura_jugadores:e Coma declaracion_planetas_mapa:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 3);:}
+;
+
+declaracion_jugadores ::= 
+    estructura_mapa:e Coma declaracion_planetas_neutrales_planetas:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 4);:}
+    | estructura_planetas:e Coma declaracion_planetas_neutrales_mapa:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 1);:}
+    | estructura_planetas_neutrales:e Coma declaracion_planetas_mapa:a {:RESULT = manejadorSintactico.agregarAtributosKonquest(e, a, 2);:}
+;
+
+declaracion_planetas_neutrales_jugadores ::= 
+    estructura_planetas_neutrales:e Coma estructura_jugadores:a {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 1);:}
+    | estructura_jugadores:a Coma estructura_planetas_neutrales:e {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 1);:}
+;
+
+declaracion_planetas_jugadores ::= 
+    estructura_planetas:e Coma estructura_jugadores:a {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 2);:}
+    | estructura_jugadores:a Coma estructura_planetas:e {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 2);:}
+;
+
+declaracion_planetas_neutrales_planetas ::= 
+    estructura_planetas_neutrales:e Coma estructura_planetas:a {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 3);:}
+    | estructura_planetas:a Coma estructura_planetas_neutrales:e {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 3);:}
+;
+
+declaracion_mapa_jugadores ::= 
+    estructura_mapa:e Coma estructura_jugadores:a {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 4);:}
+    | estructura_jugadores:a Coma estructura_mapa:e {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 4);:}
+;
+
+declaracion_planetas_neutrales_mapa ::= 
+    estructura_planetas_neutrales:e Coma estructura_mapa:a {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 5);:}
+    | estructura_mapa:a Coma estructura_planetas_neutrales:e {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 5);:}
+;
+
+declaracion_planetas_mapa ::= 
+    estructura_planetas:e Coma estructura_mapa:a {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 6);:}
+    | estructura_mapa:e Coma estructura_planetas:a {:RESULT = manejadorSintactico.agregarDosAtributosKonquest(e, a, 6);:}
+;
+
+estructura_mapa ::= Mapa DosPuntos CorcheteA struct_map:e CorcheteC {:Mapa mapa = new Mapa((AtributtosMapa)e); RESULT = manejadorSintactico.mapaComprobar(mapa, eleft, eright);:};
+estructura_planetas ::= Planetas DosPuntos LlaveA struct_planetas:e LlaveC 
+    {:
+        RESULT = manejadorSintactico.listaPlanetasKonquest(e);
+    :}
+    | Planetas DosPuntos LlaveA LlaveC {:RESULT = new ArrayList<>();:}
+;
+
+estructura_planetas_neutrales ::= 
+    PlanetasNeutrales DosPuntos LlaveA struct_planetas_neutrales:e LlaveC
+    {:
+        RESULT = manejadorSintactico.listaPlanetasKonquest(e);
+    :}    
+    | PlanetasNeutrales DosPuntos LlaveA LlaveC {:RESULT = new ArrayList<>();:}
+;
+
+estructura_jugadores ::= Jugadores DosPuntos LlaveA struct_jugadores:e LlaveC
+    {:
+        RESULT = manejadorSintactico.listaJugadoresKonquest(e);
+    :}
+;
+
+/* Estructura Planetas */
+struct_planetas ::= 
+    CorcheteA declaracion_estructura_planetas:e CorcheteC {:RESULT = e;:}
+    | struct_planetas:e Coma CorcheteA declaracion_estructura_planetas:a CorcheteC {:RESULT = manejadorSintactico.listadoPlanetasN(e, a);:}
+;
+
+/* Estructura Planetas Neutrales */
+struct_planetas_neutrales ::= 
+    CorcheteA declaracion_estructura_planetas_neutrales:e CorcheteC {:RESULT = e;:}
+    | struct_planetas_neutrales:e Coma CorcheteA declaracion_estructura_planetas_neutrales:a CorcheteC {:RESULT = manejadorSintactico.listadoPlanetasN(e, a);:}
+;
+
+declaracion_estructura_planetas ::=
+    estructura_nombre:e Coma declaracion_nombre:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 4);:}
+    | estructura_naves:e Coma declaracion_naves:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 1);:}
+    | estructura_produccion:e Coma declaracion_produccion:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 2);:}
+    | estructura_porcentaje:e Coma declaracion_porcentaje:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 3);:}
+;
+
+declaracion_estructura_planetas_neutrales ::=
+    estructura_nombre:e Coma declaracion_nombre:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 4);:}
+    | estructura_naves:e Coma declaracion_naves:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 1);:}
+    | estructura_produccion:e Coma declaracion_produccion:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 2);:}
+    | estructura_porcentaje:e Coma declaracion_porcentaje:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 3);:}
+    | declaracion_produccion:a {:RESULT = a;:}
+;
+
+declaracion_nombre ::= 
+    estructura_naves:e Coma declaracion_produccion_porcentaje:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 1);:}
+    | estructura_produccion:e Coma declaracion_naves_porcentaje:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 2);:}
+    | estructura_porcentaje:e Coma declaracion_naves_produccion:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 3);:}
+;
+
+declaracion_naves ::= 
+    estructura_nombre:e Coma declaracion_produccion_porcentaje:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 4);:}
+    | estructura_produccion:e Coma declaracion_nombre_porcentaje:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 2);:}
+    | estructura_porcentaje:e Coma declaracion_nombre_produccion:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 3);:}
+;
+
+declaracion_produccion ::= 
+    estructura_nombre:e Coma declaracion_naves_porcentaje:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 4);:}
+    | estructura_naves:e Coma declaracion_nombre_porcentaje:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 1);:}
+    | estructura_porcentaje:e Coma declaracion_nombre_naves:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 3);:}
+;
+
+declaracion_porcentaje ::= 
+    estructura_nombre:e Coma declaracion_naves_produccion:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 4);:}
+    | estructura_naves:e Coma declaracion_nombre_produccion:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 1);:}
+    | estructura_produccion:e Coma declaracion_nombre_naves:a {:RESULT = manejadorSintactico.agregarAtributos(e, a, 2);:}
+;
+
+declaracion_nombre_naves ::= 
+    estructura_nombre:e Coma estructura_naves:a {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 1);:}
+    | estructura_naves:a Coma estructura_nombre:e {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 1);:}
+;
+
+declaracion_nombre_produccion ::= 
+    estructura_nombre:e Coma estructura_produccion:a {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 2);:}
+    | estructura_produccion:a Coma estructura_nombre:e {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 2);:}
+;
+
+declaracion_nombre_porcentaje::= 
+    estructura_nombre:e Coma estructura_porcentaje:a {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 3);:}
+    | estructura_porcentaje:a Coma estructura_nombre:e {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 3);:}
+;
+
+declaracion_naves_produccion ::= 
+    estructura_produccion:a Coma estructura_naves:e {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 4);:}
+    | estructura_naves:e Coma estructura_produccion:a {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 4);:}
+;
+
+declaracion_naves_porcentaje ::= 
+    estructura_naves:e Coma estructura_porcentaje:a {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 5);:}
+    | estructura_porcentaje:a Coma estructura_naves:e {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 5);:}
+;
+
+declaracion_produccion_porcentaje ::= 
+    estructura_porcentaje:a Coma estructura_produccion:e {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 6);:}
+    | estructura_produccion:e Coma estructura_porcentaje:a {:RESULT = manejadorSintactico.agregarDosAtributos(e, a, 6);:}
+;
+
+estructura_nombre ::= Nombre DosPuntos NombrePlanetas:e {:RESULT = e.toString();:};
+estructura_naves ::= Naves DosPuntos Numero:e {:RESULT = Integer.parseInt(e.toString());:};
+estructura_produccion ::= Produccion DosPuntos Numero:e {:RESULT = Integer.parseInt(e.toString());:};
+estructura_porcentaje ::= PorcentajeMuertes DosPuntos Decimal:e {:RESULT = Double.parseDouble(e.toString());:};
+
+produccion_booleana ::= 
+    True {:RESULT = true;:}
+    | False {:RESULT = false;:}
+;
+
+/* Estrucura Jugadores */
+
+struct_jugadores ::= 
+    CorcheteA produccion_jugadores:a CorcheteC {:RESULT = a;:}
+    | struct_jugadores:e Coma CorcheteA produccion_jugadores:a CorcheteC {:RESULT = manejadorSintactico.listadoJugadores(e, a, aleft, aright);:}
+;
+
+produccion_nombres ::= 
+    NombreJugadores:e {:RESULT = e.toString().replaceAll("\"", "");:}
+    | NombrePlanetas:e {:RESULT = e.toString().replaceAll("\"", "");:}
+;
+
+produccion_jugadores ::= 
+    Nombre DosPuntos produccion_nombres:e Coma PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC Coma Tipo DosPuntos produccion_tipo:i
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | Nombre DosPuntos produccion_nombres:e Coma Tipo DosPuntos produccion_tipo:i Coma PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC 
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | Tipo DosPuntos produccion_tipo:i Coma Nombre DosPuntos produccion_nombres:e Coma PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC 
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | Tipo DosPuntos produccion_tipo:i Coma PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC Coma Nombre DosPuntos produccion_nombres:e
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC Coma Tipo DosPuntos produccion_tipo:i Coma Nombre DosPuntos produccion_nombres:e
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+    | PlanetasJugadores DosPuntos LlaveA produccion_planetas_jugadores:a LlaveC Coma Nombre DosPuntos produccion_nombres:e Coma Tipo DosPuntos produccion_tipo:i
+    {:RESULT = manejadorSintactico.agregarAtributosJugador(e, a, i);:}
+;
+
+produccion_tipo ::= 
+    Humano:e {:RESULT = e.toString();:}
+    | Dificil:e {:RESULT = e.toString();:}
+    | Facil:e {:RESULT = e.toString();:}
+;
+
+produccion_planetas_jugadores ::= 
+    NombrePlanetas:e {:RESULT = e.toString().replaceAll("\"", "");:}
+    | produccion_planetas_jugadores:e Coma NombrePlanetas:a {:RESULT = manejadorSintactico.listadoPlanetasJugador(e, a);:}
+;
+
+/* Estructura Mapa */
+
+estructura_tamaño_mapa ::=
+    Filas DosPuntos Numero:f Coma Columnas DosPuntos Numero:c
+    {:RESULT = manejadorSintactico.agregarTamaño(f, c);:}
+    | Columnas DosPuntos Numero:c Coma Filas DosPuntos Numero:f
+    {:RESULT = manejadorSintactico.agregarTamaño(f, c);:}
+;
+
+estructura_neutrales_mapa ::=
+    MostrarNaves DosPuntos produccion_booleana:e Coma MostrarEstadisticas DosPuntos produccion_booleana:a Coma Produccion DosPuntos Numero:c
+    {:RESULT = manejadorSintactico.agregarNeutrales(e, a, c);:}
+
+    | MostrarNaves DosPuntos produccion_booleana:e Coma Produccion DosPuntos Numero:c Coma MostrarEstadisticas DosPuntos produccion_booleana:a
+    {:RESULT = manejadorSintactico.agregarNeutrales(e, a, c);:}
+
+    | MostrarEstadisticas DosPuntos produccion_booleana:a Coma MostrarNaves DosPuntos produccion_booleana:e Coma Produccion DosPuntos Numero:c 
+    {:RESULT = manejadorSintactico.agregarNeutrales(e, a, c);:}
+
+    | MostrarEstadisticas DosPuntos produccion_booleana:a Coma Produccion DosPuntos Numero:c Coma MostrarNaves DosPuntos produccion_booleana:e
+    {:RESULT = manejadorSintactico.agregarNeutrales(e, a, c);:}
+
+    | Produccion DosPuntos Numero:c Coma MostrarEstadisticas DosPuntos produccion_booleana:a Coma MostrarNaves DosPuntos produccion_booleana:e 
+    {:RESULT = manejadorSintactico.agregarNeutrales(e, a, c);:}
+
+    | Produccion DosPuntos Numero:c Coma MostrarNaves DosPuntos produccion_booleana:e Coma MostrarEstadisticas DosPuntos produccion_booleana:a
+    {:RESULT = manejadorSintactico.agregarNeutrales(e, a, c);:}
+;
+
+produccion_nombres_mapa ::= 
+    NombreJugadores:e {:RESULT = e.toString().replaceAll("\"", "");:}
+    | NombrePlanetas:e {:RESULT = e.toString().replaceAll("\"", "");:}
+    | Identificador:e {:RESULT = e.toString().replaceAll("\"", "");:}
+;
+
+struct_map ::= 
+    struct_map:e Coma ID DosPuntos produccion_nombres_mapa:a {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 1);:}
+    | struct_map:e Coma Tamaño DosPuntos CorcheteA estructura_tamaño_mapa:a CorcheteC {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 2);:}
+    | struct_map:e Coma TamañoS DosPuntos CorcheteA estructura_tamaño_mapa:a CorcheteC {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 2);:}
+    | struct_map:e Coma AlAzar DosPuntos produccion_booleana:a {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 3);:}
+    | struct_map:e Coma PlanetasNeutralesMapa DosPuntos Numero:a {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 4);:}
+    | struct_map:e Coma MapaCiego DosPuntos produccion_booleana:a {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 5);:}
+    | struct_map:e Coma Acumular DosPuntos produccion_booleana:a {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 6);:}
+    | struct_map:e Coma Neutrales DosPuntos CorcheteA estructura_neutrales_mapa:a CorcheteC {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 7);:}
+    | struct_map:e Coma Finalizacion DosPuntos Numero:a {:RESULT = manejadorSintactico.agregarObjetosMapa(e, a, aleft, aright, 8);:}
+    
+    | ID DosPuntos produccion_nombres_mapa:e {:RESULT = manejadorSintactico.agregarUnAtributto(e, 1);:}
+    | Tamaño DosPuntos CorcheteA estructura_tamaño_mapa:e CorcheteC {:RESULT = manejadorSintactico.agregarUnAtributto(e, 2);:}
+    | TamañoS DosPuntos CorcheteA estructura_tamaño_mapa:e CorcheteC  {:RESULT = manejadorSintactico.agregarUnAtributto(e, 2);:}
+    | AlAzar DosPuntos produccion_booleana:e {:RESULT = manejadorSintactico.agregarUnAtributto(e, 3);:}
+    | PlanetasNeutralesMapa DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributto(e, 4);:}
+    | MapaCiego DosPuntos produccion_booleana:e {:RESULT = manejadorSintactico.agregarUnAtributto(e, 5);:}
+    | Acumular DosPuntos produccion_booleana:e {:RESULT = manejadorSintactico.agregarUnAtributto(e, 6);:}
+    | Neutrales DosPuntos CorcheteA estructura_neutrales_mapa:e CorcheteC {:RESULT = manejadorSintactico.agregarUnAtributto(e, 7);:}
+    | Finalizacion DosPuntos Numero:e {:RESULT = manejadorSintactico.agregarUnAtributto(e, 8);:}
+;

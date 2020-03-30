@@ -1,0 +1,123 @@
+{
+	MAPA: {
+		tamaño: {
+			filas: 5,
+			columnas: 5
+		},
+		mapaCiego: true,
+		turno: 24,
+		cantidadPlanetas: 5,
+		jugador: "Jose",
+		finalizacion: 50
+	},
+	PLANETAS: [
+		{
+			nombre: "C",
+			naves: 11,
+			produccion: 11,
+			porcentajeMuertes: 0.3289599247383883,
+			fila: 1,
+			columna: 1,
+			cantidadProducida: 253
+		},
+		{
+			nombre: "D",
+			naves: 6,
+			produccion: 3,
+			porcentajeMuertes: 0.472212727658873,
+			fila: 2,
+			columna: 0,
+			cantidadProducida: 69
+		},
+		{
+			nombre: "E",
+			naves: 5,
+			produccion: 5,
+			porcentajeMuertes: 0.6572289056006528,
+			fila: 2,
+			columna: 2,
+			cantidadProducida: 115
+		},
+		{
+			nombre: "A",
+			naves: 290,
+			produccion: 19,
+			porcentajeMuertes: 0.13984516306535616,
+			fila: 3,
+			columna: 0,
+			cantidadProducida: 437
+		},
+		{
+			nombre: "B",
+			naves: 15,
+			produccion: 8,
+			porcentajeMuertes: 0.2402705902439593,
+			fila: 3,
+			columna: 1,
+			cantidadProducida: 184
+		}
+	],
+	PLANETAS_NEUTRALES: [
+	],
+	JUGADORES: [
+		{
+			nombre: "Jose",
+			planetas: [
+				"A",
+				"E",
+				"C"
+			],
+			tipo: HUMANO
+		},
+		{
+			nombre: "Boot2",
+			planetas: [
+				"B",
+				"D"
+			],
+			tipo: DIFICIL
+		}
+	],
+	ATAQUE: [
+		{
+			planetaDestino: "D",
+			planetaOrigen: "C",
+			jugador: "Jose",
+			porcentajeMuertes: 0.3289599247383883,
+			naves: 52,
+			turno: 25
+		},
+		{
+			planetaDestino: "E",
+			planetaOrigen: "B",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.2402705902439593,
+			naves: 3,
+			turno: 24
+		},
+		{
+			planetaDestino: "E",
+			planetaOrigen: "D",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.472212727658873,
+			naves: 2,
+			turno: 24
+		},
+		{
+			planetaDestino: "C",
+			planetaOrigen: "B",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.2402705902439593,
+			naves: 10,
+			turno: 25
+		},
+		{
+			planetaDestino: "C",
+			planetaOrigen: "D",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.472212727658873,
+			naves: 1,
+			turno: 25
+		}
+	]
+}

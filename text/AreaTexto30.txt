@@ -1,0 +1,4 @@
+
+Turno: 2
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot1
+Turno: 3

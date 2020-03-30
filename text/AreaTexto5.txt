@@ -1,0 +1,4 @@
+
+El Planeta: D -> Se ha defendido al ataque del Jugador: Jose
+El Planeta: B -> Fue conquistado  por el Jugador: Boot2
+Turno: 5

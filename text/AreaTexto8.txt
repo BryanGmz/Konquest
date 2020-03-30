@@ -1,0 +1,10 @@
+
+El Planeta: D -> Se ha defendido al ataque del Jugador: Jose
+El Planeta: B -> Fue conquistado  por el Jugador: Boot2
+Turno: 5
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 6
+El Planeta: B -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 7
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+Turno: 8

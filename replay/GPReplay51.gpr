@@ -1,0 +1,163 @@
+{
+	MAPA: {
+		tamaño: {
+			filas: 5,
+			columnas: 5
+		},
+		mapaCiego: true,
+		turno: 11,
+		cantidadPlanetas: 5,
+		jugador: "Boot2",
+		finalizacion: 50
+	},
+	PLANETAS: [
+		{
+			nombre: "C",
+			naves: 18,
+			produccion: 15,
+			porcentajeMuertes: 0.6877024077183898,
+			fila: 2,
+			columna: 1,
+			cantidadProducida: 150
+		},
+		{
+			nombre: "B",
+			naves: 18,
+			produccion: 14,
+			porcentajeMuertes: 0.7627574397691702,
+			fila: 3,
+			columna: 0,
+			cantidadProducida: 140
+		},
+		{
+			nombre: "A",
+			naves: 19,
+			produccion: 12,
+			porcentajeMuertes: 0.48864139570923715,
+			fila: 3,
+			columna: 3,
+			cantidadProducida: 120
+		}
+	],
+	PLANETAS_NEUTRALES: [
+		{
+			nombre: "E",
+			naves: 54,
+			produccion: 4,
+			porcentajeMuertes: 0.2782074412617508,
+			fila: 0,
+			columna: 0,
+			cantidadProducida: 40
+		},
+		{
+			nombre: "D",
+			naves: 13,
+			produccion: 5,
+			porcentajeMuertes: 0.965409955549903,
+			fila: 0,
+			columna: 1,
+			cantidadProducida: 50
+		}
+	],
+	JUGADORES: [
+		{
+			nombre: "Boot2",
+			planetas: [
+				"C",
+				"B",
+				"A"
+			],
+			tipo: DIFICIL
+		}
+	],
+	ATAQUE: [
+		{
+			planetaDestino: "D",
+			planetaOrigen: "B",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.7627574397691702,
+			naves: 10,
+			turno: 10
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "B",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.7627574397691702,
+			naves: 11,
+			turno: 11
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "B",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.7627574397691702,
+			naves: 0,
+			turno: 12
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "C",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.6877024077183898,
+			naves: 16,
+			turno: 11
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "B",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.7627574397691702,
+			naves: 19,
+			turno: 13
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "C",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.6877024077183898,
+			naves: 11,
+			turno: 12
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "B",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.7627574397691702,
+			naves: 22,
+			turno: 14
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "A",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.48864139570923715,
+			naves: 50,
+			turno: 15
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "C",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.6877024077183898,
+			naves: 10,
+			turno: 13
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "B",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.7627574397691702,
+			naves: 9,
+			turno: 15
+		},
+		{
+			planetaDestino: "D",
+			planetaOrigen: "A",
+			jugador: "Boot2",
+			porcentajeMuertes: 0.48864139570923715,
+			naves: 19,
+			turno: 16
+		}
+	]
+}

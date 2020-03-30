@@ -1,0 +1,112 @@
+package konquest.backed.analizador.replay;
+
+import konquest.backed.manejadores.*;
+import java_cup.runtime.*;
+import konquest.backed.objetos.*;
+import javax.swing.*;
+import konquest.gui.*;
+
+
+parser code {:
+    private final ManejadorSintacticoReplay manejadorSintactico = new ManejadorSintacticoReplay();
+    private Principal principal;
+    private DialogoErrores errores;
+    
+    public SintaxReplay(LexicoReplay lexer, Principal principal, DialogoErrores errores) { 
+        super(lexer);   
+        this.principal = principal;
+        this.errores = errores;
+    }
+
+    public void setAccion(String tipo, String mensaje, String accion){
+        System.out.println("ERROR Lexico Tipo: " + tipo + "\t Mensaje: " + mensaje + "\tAcción: ERROR\n");
+    }
+
+    @Override
+    public void syntax_error(Symbol s){
+        try {
+            errores.agregarErroresTXTSintaxis(
+            (("Error Sintaxis Linea #: " + (s.right + 1) 
+            + " Columna # " + (s.left + 1) 
+            + " Token : -> " + (s.value) + "\n" )));
+        } catch (Exception e) {
+            System.out.println("Error " + e.toString());
+        }
+    }
+:}
+    
+
+/* Terminales */
+
+terminal Replay, Archivo, Texto, Nombre, Ubicacion, Error;
+terminal Igual, Division, Mayor, Menor, Identificador, PathCPK, PathTXT, PathCarpeta;
+
+/* No Terminales */
+
+non terminal inicio;
+non terminal estructura_replay, estructura_partida, declaracion_archivo, 
+             declaracion_partida_inicio, declaracion_partida_fin, declaracion_replay_inicio, declaracion_replay_fin;
+
+/* Gramaticas */
+
+start with inicio;
+
+inicio ::= 
+    declaracion_replay_inicio:e declaracion_replay_fin 
+    {:
+    if(e != null) {
+        principal.setReplay((Replay)e);
+        System.out.println("Aceptado");
+    } else {
+        System.out.println("No Aceptado");
+    } 
+    :}
+    | declaracion_replay_inicio:a estructura_replay:e declaracion_replay_fin 
+    {:
+    Replay replay = manejadorSintactico.agregarLista(a, e);
+    String salida = "";
+    if(manejadorSintactico.agregarLista(a, e) != null) {
+        principal.setReplay(replay);
+        System.out.println("\nAceptado");
+    } else {
+        System.out.println("No Aceptado");
+    } 
+    :}
+    | Error inicio
+    | error:e inicio {:parser.syntax_error((Symbol) e);:}
+;
+
+estructura_replay ::=   
+    estructura_partida:e {:RESULT = e;:}
+    | estructura_replay:a estructura_partida:e {:RESULT = manejadorSintactico.listaArchivos(a, e);:}
+;
+
+estructura_partida ::=
+    declaracion_partida_inicio:e declaracion_partida_fin {:RESULT = e;:} 
+    | declaracion_partida_inicio:e declaracion_archivo:a declaracion_partida_fin {:RESULT = manejadorSintactico.argregarArearTXTArchivoReplay(e, a);:}
+    | error:e estructura_partida:a {:parser.syntax_error((Symbol) e); RESULT = a;:}
+    | Error estructura_partida:a {:RESULT = a;:}
+;
+
+declaracion_archivo ::=
+    Menor Texto Ubicacion Igual PathTXT:e Division Mayor
+    {:RESULT = manejadorSintactico.agregarAtributosArchivoTXT(e);:}
+;
+
+declaracion_partida_inicio ::=
+    Menor Archivo Nombre Igual Identificador:a Ubicacion Igual PathCPK:e Mayor
+    {:RESULT = manejadorSintactico.argregarAtributosArchivoReplay(a, e);:}
+;
+
+declaracion_partida_fin ::=
+    Menor Division Archivo Mayor
+;
+
+declaracion_replay_inicio ::=
+    Menor Replay Nombre Igual Identificador:a Ubicacion Igual PathCarpeta:e Mayor
+    {:RESULT = manejadorSintactico.agregarAtributosReplay(a, e);:}
+;
+
+declaracion_replay_fin ::=
+    Menor Division Replay Mayor
+;

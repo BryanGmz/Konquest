@@ -1,0 +1,59 @@
+
+El Planeta: D -> Se ha defendido al ataque del Jugador: Jose
+El Planeta: B -> Fue conquistado  por el Jugador: Boot2
+Turno: 5
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 6
+El Planeta: B -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 7
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+Turno: 8
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+Turno: 9
+El Planeta: D -> Fue conquistado  por el Jugador: Jose
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 10
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 11
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 12
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 13
+El Planeta: D -> Fue conquistado  por el Jugador: Jose
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: E -> Fue conquistado  por el Jugador: Boot2
+Turno: 14
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+El Planeta: E -> Fue conquistado  por el Jugador: Boot2
+Turno: 15
+El Planeta: B -> Fue conquistado  por el Jugador: Jose
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 16
+El Planeta: E -> Fue conquistado  por el Jugador: Boot2
+Turno: 17
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 18
+El Planeta: E -> Fue conquistado  por el Jugador: Jose
+El Planeta: D -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 19
+El Planeta: B -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 20
+El Planeta: B -> Fue conquistado  por el Jugador: Boot2
+Turno: 21
+El Planeta: D -> Fue conquistado  por el Jugador: Boot2
+Turno: 22
+El Planeta: C -> Fue conquistado  por el Jugador: Jose
+El Planeta: E -> Se ha defendido al ataque del Jugador: Jose
+Turno: 23
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 24
+El Planeta: E -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 25
+El Planeta: D -> Fue conquistado  por el Jugador: Jose
+El Planeta: C -> Se ha defendido al ataque del Jugador: Boot2
+Turno: 26
